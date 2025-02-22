@@ -1,14 +1,14 @@
 import Foundation
 import CoreGraphics
 
-struct Note: Identifiable, Codable {
-    let id: UUID
-    var title: String
-    var tags: [String]
-    var subject: String
-    var content: [NoteElement]
-    var createdAt: Date
-    var modifiedAt: Date
+public struct Note: Identifiable, Codable {
+    public let id: UUID
+    public var title: String
+    public var tags: [String]
+    public var subject: String
+    public var content: [NoteElement]
+    public var createdAt: Date
+    public var modifiedAt: Date
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -19,16 +19,26 @@ struct Note: Identifiable, Codable {
         case createdAt = "created"
         case modifiedAt = "modified"
     }
+    
+    public init(id: UUID = UUID(), title: String = "", tags: [String] = [], subject: String = "", content: [NoteElement] = [], createdAt: Date = Date(), modifiedAt: Date = Date()) {
+        self.id = id
+        self.title = title
+        self.tags = tags
+        self.subject = subject
+        self.content = content
+        self.createdAt = createdAt
+        self.modifiedAt = modifiedAt
+    }
 }
 
-struct NoteElement: Codable, Identifiable {
-    let id: UUID
-    var type: String
-    var content: [StrokePoint]
-    var bounds: CGRect
-    var strokeProperties: StrokeProperties
+public struct NoteElement: Codable, Identifiable {
+    public let id: UUID
+    public var type: String
+    public var content: [StrokePoint]
+    public var bounds: CGRect
+    public var strokeProperties: StrokeProperties
     
-    init(id: UUID = UUID(), type: String, content: [StrokePoint], bounds: CGRect, strokeProperties: StrokeProperties) {
+    public init(id: UUID = UUID(), type: String, content: [StrokePoint], bounds: CGRect, strokeProperties: StrokeProperties) {
         self.id = id
         self.type = type
         self.content = content
@@ -45,13 +55,38 @@ struct NoteElement: Codable, Identifiable {
     }
 }
 
-struct StrokePoint: Codable {
-    var x: CGFloat
-    var y: CGFloat
-    var pressure: CGFloat
+public struct StrokePoint: Codable {
+    public var x: CGFloat
+    public var y: CGFloat
+    public var pressure: CGFloat
+    
+    public init(x: CGFloat, y: CGFloat, pressure: CGFloat) {
+        self.x = x
+        self.y = y
+        self.pressure = pressure
+    }
 }
 
-struct StrokeProperties: Codable {
-    var color: String
-    var width: CGFloat
+public struct StrokeProperties: Codable {
+    public var color: String
+    public var width: CGFloat
+    
+    public init(color: String, width: CGFloat) {
+        self.color = color
+        self.width = width
+    }
+}
+
+extension Note {
+    static func empty() -> Note {
+        Note(
+            id: UUID(),
+            title: "",
+            tags: [],
+            subject: "",
+            content: [],
+            createdAt: Date(),
+            modifiedAt: Date()
+        )
+    }
 } 

@@ -6,6 +6,11 @@
 //
 
 import SwiftUI
+import CoreGraphics
+
+// Import local services
+@_exported import struct CoreGraphics.CGRect
+@_exported import struct CoreGraphics.CGFloat
 
 struct ContentView: View {
     @State private var currentNote = Note(
@@ -64,9 +69,13 @@ struct ContentView: View {
                     do {
                         _ = try await AuthManager.shared.login(username: username, password: password)
                         isAuthenticated = true
+                    } catch APIError.customError(let message) {
+                        authErrorMessage = message
+                        showingAuthError = true
                     } catch {
                         authErrorMessage = "Invalid credentials"
                         showingAuthError = true
+                        print("Login error: \(error)")
                     }
                 }
             }
@@ -125,10 +134,6 @@ struct ContentView: View {
                         }
                         showingAuthError = true
                         print("Registration error: \(error)")
-                    } catch {
-                        authErrorMessage = "Registration failed: \(error.localizedDescription)"
-                        showingAuthError = true
-                        print("Registration error: \(error)")
                     }
                 }
             }
@@ -162,11 +167,20 @@ struct ContentView: View {
                 Button("Save") {
                     Task {
                         do {
+                            print("🔍 Current note before save: \(currentNote)")
+                            print("Starting note save...")
                             let savedNote = try await APIClient.shared.createNote(currentNote)
                             currentNote = savedNote
-                        } catch {
+                            print("✅ Note saved successfully: \(savedNote)")
+                        } catch APIError.unauthorized {
+                            print("❌ Unauthorized - redirecting to login")
+                            isAuthenticated = false
                             showingSaveError = true
-                            print("Save error: \(error)")
+                            authErrorMessage = "Please log in again"
+                        } catch {
+                            print("❌ Save error: \(error)")
+                            showingSaveError = true
+                            authErrorMessage = "Error: \(error.localizedDescription)"
                         }
                     }
                 }

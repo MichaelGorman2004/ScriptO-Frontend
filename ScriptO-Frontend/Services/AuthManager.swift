@@ -78,8 +78,12 @@ class AuthManager {
         
         if httpResponse.statusCode == 200 {
             let loginResponse = try JSONDecoder().decode(LoginResponse.self, from: data)
-            APIClient.shared.setAuthToken(loginResponse.data.accessToken)
-            return loginResponse.data.accessToken
+            let token = loginResponse.data.accessToken
+            
+            // Store token in both TokenManager and APIClient
+            TokenManager.shared.saveToken(token)
+            APIClient.shared.setAuthToken(token)
+            return token
         } else {
             // Try to decode error message if available
             if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {

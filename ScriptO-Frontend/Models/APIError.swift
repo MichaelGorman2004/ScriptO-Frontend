@@ -1,6 +1,6 @@
 import Foundation
 
-enum APIError: Error {
+public enum APIError: Error {
     case invalidURL
     case networkError(Error)
     case invalidResponse
@@ -9,7 +9,12 @@ enum APIError: Error {
     case customError(String)
 }
 
-struct ErrorResponse: Codable {
-    let success: Bool
-    let message: String
+public struct ErrorResponse: Codable {
+    public let success: Bool
+    public let message: String
+    
+    public init(success: Bool, message: String) {
+        self.success = success
+        self.message = message
+    }
 } 
