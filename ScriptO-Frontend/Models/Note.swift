@@ -1,6 +1,20 @@
 import Foundation
 import CoreGraphics
 
+/*
+ Note.swift
+ 
+ Core data model definitions for the ScriptO application's note-taking functionality.
+ This file defines the structure for notes, including their content, metadata, and
+ drawing elements.
+ 
+ Key Structures:
+ - Note: Main note container with metadata
+ - NoteElement: Individual elements within a note (e.g., drawings)
+ - StrokePoint: Points making up a drawing stroke
+ - StrokeProperties: Drawing stroke styling properties
+*/
+
 public struct Note: Identifiable, Codable {
     public let id: UUID
     public var title: String

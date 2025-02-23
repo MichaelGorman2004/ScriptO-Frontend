@@ -1,6 +1,20 @@
 import SwiftUI
 import PencilKit
 
+/*
+ DrawingCanvas.swift
+ 
+ A SwiftUI view providing drawing functionality for the ScriptO application.
+ This canvas handles touch input, stroke rendering, and maintains the state
+ of drawing elements within a note.
+ 
+ Key Features:
+ - Touch gesture handling
+ - Real-time drawing rendering
+ - Stroke property management
+ - Drawing element state management
+*/
+
 struct DrawingCanvas: View {
     @Binding var noteElements: [NoteElement]
     @State private var currentStroke: [StrokePoint] = []

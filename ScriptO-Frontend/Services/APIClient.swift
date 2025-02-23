@@ -9,6 +9,22 @@ import SwiftUI
 // @_exported import Models // Add this if you have a Models module
 // Otherwise, make sure Note.swift and APIError.swift are in your project
 
+/*
+ APIClient.swift
+ 
+ The primary networking layer for the ScriptO application. This client handles all API
+ communications with the backend server, managing authentication, request formatting,
+ and response handling. It includes comprehensive error handling and debug logging.
+ 
+ Key Features:
+ - RESTful API communication
+ - JWT token authentication
+ - JSON encoding/decoding
+ - Error handling and logging
+ - Preview mode support for SwiftUI previews
+ - ISO8601 date formatting
+*/
+
 class APIClient {
     static let shared = APIClient()
     let baseURL = "http://localhost:8000/api/v1"

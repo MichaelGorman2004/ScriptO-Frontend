@@ -1,5 +1,20 @@
 import Foundation
 
+/*
+ AuthManager.swift
+ 
+ Authentication service manager handling user registration and login functionality.
+ This manager coordinates with the API client to process authentication requests
+ and manage user sessions.
+ 
+ Key Features:
+ - User registration with email/password
+ - User login with credentials
+ - Token management integration
+ - Error handling for auth failures
+ - Response parsing and validation
+*/
+
 class AuthManager {
     static let shared = AuthManager()
     
