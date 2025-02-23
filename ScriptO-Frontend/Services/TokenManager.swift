@@ -14,23 +14,19 @@ import Foundation
  - Debug logging for token operations
 */
 
-public class TokenManager {
-    public static let shared = TokenManager()
-    private let tokenKey = "authToken"
+class TokenManager {
+    static let shared = TokenManager()
+    private var token: String?
     
-    public func saveToken(_ token: String) {
-        UserDefaults.standard.set(token, forKey: tokenKey)
-        print("🔑 Token saved: \(token)")
+    func saveToken(_ token: String) {
+        self.token = token
     }
     
-    public func getToken() -> String? {
-        let token = UserDefaults.standard.string(forKey: tokenKey)
-        print("🔑 Token retrieved: \(token ?? "nil")")
+    func getToken() -> String? {
         return token
     }
     
-    public func clearToken() {
-        UserDefaults.standard.removeObject(forKey: tokenKey)
-        print("🔑 Token cleared")
+    func clearToken() {
+        token = nil
     }
 } 

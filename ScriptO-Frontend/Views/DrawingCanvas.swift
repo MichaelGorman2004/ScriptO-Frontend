@@ -30,7 +30,7 @@ struct DrawingCanvas: View {
                             path.addLine(to: CGPoint(x: point.x, y: point.y))
                         }
                     }
-                    context.stroke(path, with: .color(.black), lineWidth: element.strokeProperties.width)
+                    context.stroke(path, with: .color(.black), lineWidth: element.strokeProperties?.width ?? 2.0)
                 }
             }
         }
@@ -91,4 +91,17 @@ struct DrawingCanvas: View {
 #Preview {
     DrawingCanvas(noteElements: .constant([]))
         .frame(width: 300, height: 400)
+        .environment(\.isPreview, true)
+}
+
+// Add a preview-specific environment key
+private struct PreviewEnvironmentKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var isPreview: Bool {
+        get { self[PreviewEnvironmentKey.self] }
+        set { self[PreviewEnvironmentKey.self] = newValue }
+    }
 } 

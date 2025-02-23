@@ -7,10 +7,8 @@
 
 import SwiftUI
 import CoreGraphics
+import Foundation
 
-// Import local services
-@_exported import struct CoreGraphics.CGRect
-@_exported import struct CoreGraphics.CGFloat
 
 struct ContentView: View {
     @State private var currentNote = Note(
@@ -36,6 +34,10 @@ struct ContentView: View {
     @State private var registerPassword = ""
     @State private var showingAuthError = false
     @State private var authErrorMessage = ""
+    
+    // Add state for save status
+    @State private var isSaving = false
+    @State private var showingSaveSuccess = false
     
     var body: some View {
         if isAuthenticated {
@@ -164,26 +166,19 @@ struct ContentView: View {
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(8)
                 
-                Button("Save") {
+                Button(action: {
                     Task {
-                        do {
-                            print("🔍 Current note before save: \(currentNote)")
-                            print("Starting note save...")
-                            let savedNote = try await APIClient.shared.createNote(currentNote)
-                            currentNote = savedNote
-                            print("✅ Note saved successfully: \(savedNote)")
-                        } catch APIError.unauthorized {
-                            print("❌ Unauthorized - redirecting to login")
-                            isAuthenticated = false
-                            showingSaveError = true
-                            authErrorMessage = "Please log in again"
-                        } catch {
-                            print("❌ Save error: \(error)")
-                            showingSaveError = true
-                            authErrorMessage = "Error: \(error.localizedDescription)"
-                        }
+                        await saveNote()
+                    }
+                }) {
+                    if isSaving {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    } else {
+                        Text("Save")
                     }
                 }
+                .disabled(isSaving)
                 .padding()
                 .background(Color.blue)
                 .foregroundColor(.white)
@@ -198,7 +193,38 @@ struct ContentView: View {
         .alert("Error Saving", isPresented: $showingSaveError) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("There was an error saving your note. Please try again.")
+            Text(authErrorMessage)
+        }
+        .alert("Note Saved", isPresented: $showingSaveSuccess) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Your note has been saved successfully!")
+        }
+    }
+    
+    func saveNote() async {
+        isSaving = true
+        defer { isSaving = false }
+        
+        do {
+            print("📝 Saving note: \(currentNote.title)")
+            let savedNote = try await APIClient.shared.saveNote(currentNote)
+            currentNote = savedNote
+            showingSaveSuccess = true
+            print("✅ Note saved successfully")
+        } catch APIError.unauthorized {
+            print("❌ Unauthorized - redirecting to login")
+            isAuthenticated = false
+            showingSaveError = true
+            authErrorMessage = "Please log in again"
+        } catch APIError.customError(let message) {
+            print("❌ Save error: \(message)")
+            showingSaveError = true
+            authErrorMessage = message
+        } catch {
+            print("❌ Save error: \(error.localizedDescription)")
+            showingSaveError = true
+            authErrorMessage = "Failed to save note: \(error.localizedDescription)"
         }
     }
 }
